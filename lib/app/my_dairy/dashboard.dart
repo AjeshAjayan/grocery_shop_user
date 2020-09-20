@@ -298,7 +298,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                   Text(
                                     now.day.toString() +
                                         ' ' +
-                                        Months.months[now.month - 1],
+                                        Months.months[now.month - 2],
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                       fontFamily: FitnessAppTheme.fontName,

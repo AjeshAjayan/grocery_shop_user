@@ -6,14 +6,16 @@ class TitleView extends StatelessWidget {
   final String subTxt;
   final AnimationController animationController;
   final Animation animation;
+  final bool showForwardArrow;
 
-  const TitleView(
-      {Key key,
-      this.titleTxt: "",
-      this.subTxt: "",
-      this.animationController,
-      this.animation})
-      : super(key: key);
+  const TitleView({
+    Key key,
+    this.titleTxt: "",
+    this.subTxt: "",
+    this.animationController,
+    this.animation,
+    this.showForwardArrow = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -62,13 +64,16 @@ class TitleView extends StatelessWidget {
                                 color: FitnessAppTheme.nearlyDarkBlue,
                               ),
                             ),
-                            SizedBox(
-                              height: 38,
-                              width: 26,
-                              child: Icon(
-                                Icons.arrow_forward,
-                                color: FitnessAppTheme.darkText,
-                                size: 18,
+                            Visibility(
+                              visible: showForwardArrow,
+                              child: SizedBox(
+                                height: 38,
+                                width: 26,
+                                child: Icon(
+                                  Icons.arrow_forward,
+                                  color: FitnessAppTheme.darkText,
+                                  size: 18,
+                                ),
                               ),
                             ),
                           ],

@@ -4,8 +4,8 @@ import 'package:grocery_manager/app/models/meals_list_data.dart';
 
 import '../../main.dart';
 
-class MealsListView extends StatefulWidget {
-  const MealsListView(
+class MenuCards extends StatefulWidget {
+  const MenuCards(
       {Key key, this.mainScreenAnimationController, this.mainScreenAnimation})
       : super(key: key);
 
@@ -13,11 +13,10 @@ class MealsListView extends StatefulWidget {
   final Animation<dynamic> mainScreenAnimation;
 
   @override
-  _MealsListViewState createState() => _MealsListViewState();
+  _MenuCardsState createState() => _MenuCardsState();
 }
 
-class _MealsListViewState extends State<MealsListView>
-    with TickerProviderStateMixin {
+class _MenuCardsState extends State<MenuCards> with TickerProviderStateMixin {
   AnimationController animationController;
   List<MealsListData> mealsListData = MealsListData.tabIconsList;
 
@@ -68,7 +67,7 @@ class _MealsListViewState extends State<MealsListView>
                                   curve: Curves.fastOutSlowIn)));
                   animationController.forward();
 
-                  return MealsView(
+                  return MenuView(
                     mealsListData: mealsListData[index],
                     animation: animation,
                     animationController: animationController,
@@ -83,8 +82,8 @@ class _MealsListViewState extends State<MealsListView>
   }
 }
 
-class MealsView extends StatelessWidget {
-  const MealsView(
+class MenuView extends StatelessWidget {
+  const MenuView(
       {Key key, this.mealsListData, this.animationController, this.animation})
       : super(key: key);
 
@@ -108,15 +107,20 @@ class MealsView extends StatelessWidget {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(
-                        top: 32, left: 8, right: 8, bottom: 16),
+                      top: 32,
+                      left: 8,
+                      right: 8,
+                      bottom: 16,
+                    ),
                     child: Container(
                       decoration: BoxDecoration(
                         boxShadow: <BoxShadow>[
                           BoxShadow(
-                              color: HexColor(mealsListData.endColor)
-                                  .withOpacity(0.6),
-                              offset: const Offset(1.1, 4.0),
-                              blurRadius: 8.0),
+                            color: HexColor(mealsListData.endColor)
+                                .withOpacity(0.6),
+                            offset: const Offset(1.1, 4.0),
+                            blurRadius: 8.0,
+                          ),
                         ],
                         gradient: LinearGradient(
                           colors: <HexColor>[
@@ -151,82 +155,37 @@ class MealsView extends StatelessWidget {
                                 color: FitnessAppTheme.white,
                               ),
                             ),
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 8, bottom: 8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      mealsListData.meals.join('\n'),
-                                      style: TextStyle(
-                                        fontFamily: FitnessAppTheme.fontName,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 10,
-                                        letterSpacing: 0.2,
-                                        color: FitnessAppTheme.white,
-                                      ),
-                                    ),
-                                  ],
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                Text(
+                                  mealsListData.nos.toString(),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: FitnessAppTheme.fontName,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 24,
+                                    letterSpacing: 0.2,
+                                    color: FitnessAppTheme.white,
+                                  ),
                                 ),
-                              ),
-                            ),
-                            mealsListData.kacl != 0
-                                ? Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: <Widget>[
-                                      Text(
-                                        mealsListData.kacl.toString(),
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontFamily: FitnessAppTheme.fontName,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 24,
-                                          letterSpacing: 0.2,
-                                          color: FitnessAppTheme.white,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 4, bottom: 3),
-                                        child: Text(
-                                          'kcal',
-                                          style: TextStyle(
-                                            fontFamily:
-                                                FitnessAppTheme.fontName,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 10,
-                                            letterSpacing: 0.2,
-                                            color: FitnessAppTheme.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                : Container(
-                                    decoration: BoxDecoration(
-                                      color: FitnessAppTheme.nearlyWhite,
-                                      shape: BoxShape.circle,
-                                      boxShadow: <BoxShadow>[
-                                        BoxShadow(
-                                            color: FitnessAppTheme.nearlyBlack
-                                                .withOpacity(0.4),
-                                            offset: Offset(8.0, 8.0),
-                                            blurRadius: 8.0),
-                                      ],
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(6.0),
-                                      child: Icon(
-                                        Icons.add,
-                                        color: HexColor(mealsListData.endColor),
-                                        size: 24,
-                                      ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 4, bottom: 3),
+                                  child: Text(
+                                    'nos',
+                                    style: TextStyle(
+                                      fontFamily: FitnessAppTheme.fontName,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 10,
+                                      letterSpacing: 0.2,
+                                      color: FitnessAppTheme.white,
                                     ),
                                   ),
+                                ),
+                              ],
+                            )
                           ],
                         ),
                       ),

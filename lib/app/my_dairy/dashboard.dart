@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_manager/app/home_theme.dart';
 import 'package:grocery_manager/app/month_list.dart';
-import 'package:grocery_manager/app/my_dairy/meals_list_view.dart';
+import 'package:grocery_manager/app/my_dairy/menu_cards.dart';
 import 'package:grocery_manager/app/my_dairy/water_view.dart';
-import 'package:grocery_manager/app/ui_view/body_measurement.dart';
+import 'package:grocery_manager/app/ui_view/menu_card_xs.dart';
 import 'package:grocery_manager/app/ui_view/glass_view.dart';
-import 'package:grocery_manager/app/ui_view/mediterranesn_diet_view.dart';
+import 'package:grocery_manager/app/ui_view/orders_card.dart';
 import 'package:grocery_manager/app/ui_view/title_view.dart';
 
 class Dashboard extends StatefulWidget {
@@ -63,7 +63,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
 
     listViews.add(
       TitleView(
-        titleTxt: 'Mediterranean diet',
+        titleTxt: 'Oders Details',
         subTxt: 'Details',
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController,
@@ -73,7 +73,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
       ),
     );
     listViews.add(
-      MediterranesnDietView(
+      OrdersCard(
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController,
             curve:
@@ -81,20 +81,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
         animationController: widget.animationController,
       ),
     );
-    listViews.add(
-      TitleView(
-        titleTxt: 'Meals today',
-        subTxt: 'Customize',
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-                Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-      ),
-    );
 
     listViews.add(
-      MealsListView(
+      MenuCards(
         mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
             CurvedAnimation(
                 parent: widget.animationController,
@@ -103,26 +92,27 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
         mainScreenAnimationController: widget.animationController,
       ),
     );
-
     listViews.add(
       TitleView(
-        titleTxt: 'Body measurement',
-        subTxt: 'Today',
+        titleTxt: 'Reports',
+        subTxt: '',
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController,
             curve:
                 Interval((1 / count) * 4, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController,
+        showForwardArrow: false,
       ),
     );
 
     listViews.add(
-      BodyMeasurementView(
+      MenuCardXs(
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController,
             curve:
                 Interval((1 / count) * 5, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController,
+        title: 'Order Report',
       ),
     );
     listViews.add(
@@ -252,7 +242,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'Dashboard',
+                                  'Manager',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: FitnessAppTheme.fontName,
@@ -260,22 +250,6 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                     fontSize: 22 + 6 - 6 * topBarOpacity,
                                     letterSpacing: 1.2,
                                     color: FitnessAppTheme.darkerText,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 38,
-                              width: 38,
-                              child: InkWell(
-                                highlightColor: Colors.transparent,
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(32.0)),
-                                onTap: () {},
-                                child: Center(
-                                  child: Icon(
-                                    Icons.keyboard_arrow_left,
-                                    color: FitnessAppTheme.grey,
                                   ),
                                 ),
                               ),
@@ -290,7 +264,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                   Padding(
                                     padding: const EdgeInsets.only(right: 8),
                                     child: Icon(
-                                      Icons.calendar_today,
+                                      Icons.watch,
                                       color: FitnessAppTheme.grey,
                                       size: 18,
                                     ),
@@ -309,22 +283,6 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                     ),
                                   ),
                                 ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 38,
-                              width: 38,
-                              child: InkWell(
-                                highlightColor: Colors.transparent,
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(32.0)),
-                                onTap: () {},
-                                child: Center(
-                                  child: Icon(
-                                    Icons.keyboard_arrow_right,
-                                    color: FitnessAppTheme.grey,
-                                  ),
-                                ),
                               ),
                             ),
                           ],

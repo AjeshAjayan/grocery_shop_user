@@ -4,12 +4,11 @@ import 'dart:math' as math;
 import 'package:grocery_manager/app/home_theme.dart';
 import 'package:grocery_manager/main.dart';
 
-class MediterranesnDietView extends StatelessWidget {
+class OrdersCard extends StatelessWidget {
   final AnimationController animationController;
   final Animation animation;
 
-  const MediterranesnDietView(
-      {Key key, this.animationController, this.animation})
+  const OrdersCard({Key key, this.animationController, this.animation})
       : super(key: key);
 
   @override
@@ -77,7 +76,7 @@ class MediterranesnDietView extends StatelessWidget {
                                               padding: const EdgeInsets.only(
                                                   left: 4, bottom: 2),
                                               child: Text(
-                                                'Eaten',
+                                                'Orders',
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   fontFamily:
@@ -100,7 +99,7 @@ class MediterranesnDietView extends StatelessWidget {
                                                   width: 28,
                                                   height: 28,
                                                   child: Image.asset(
-                                                      "assets/app_images/eaten.png"),
+                                                      "assets/app_images/orders.png"),
                                                 ),
                                                 Padding(
                                                   padding:
@@ -126,7 +125,7 @@ class MediterranesnDietView extends StatelessWidget {
                                                       const EdgeInsets.only(
                                                           left: 4, bottom: 3),
                                                   child: Text(
-                                                    'Kcal',
+                                                    'nos',
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                       fontFamily:
@@ -176,7 +175,7 @@ class MediterranesnDietView extends StatelessWidget {
                                               padding: const EdgeInsets.only(
                                                   left: 4, bottom: 2),
                                               child: Text(
-                                                'Burned',
+                                                'Pending',
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   fontFamily:
@@ -225,7 +224,7 @@ class MediterranesnDietView extends StatelessWidget {
                                                       const EdgeInsets.only(
                                                           left: 8, bottom: 3),
                                                   child: Text(
-                                                    'Kcal',
+                                                    'nos',
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                       fontFamily:

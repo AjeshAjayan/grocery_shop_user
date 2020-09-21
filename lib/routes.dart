@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_manager/login.dart';
-import 'package:grocery_manager/navigation_home_screen.dart';
 
 class Routes {
   static dynamic goToRoute(RouteSettings routeSettings) {
@@ -12,7 +11,7 @@ class Routes {
         break;
       case '/user_details':
         return MaterialPageRoute(
-          builder: (_) => NavigationHomeScreen(),
+          builder: (_) => Container(),
         );
         break;
     }

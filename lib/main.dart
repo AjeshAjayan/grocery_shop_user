@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grocery_manager/app_theme.dart';
 import 'package:grocery_manager/login.dart';
+import 'package:grocery_manager/registration.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,8 +35,8 @@ class MyApp extends StatelessWidget {
         platform: TargetPlatform.iOS,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      // home: NavigationHomeScreen(),
       home: Login(),
+      // home: Registration(),
     );
   }
 }

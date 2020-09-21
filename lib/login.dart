@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_manager/app/app_home_screen.dart';
 import 'package:grocery_manager/app_theme.dart';
+import 'package:grocery_manager/registration.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -111,12 +112,7 @@ class _LoginState extends State<Login> {
                                 ),
                               ),
                               onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => AppHomeScreen(),
-                                  ),
-                                );
+                                // TODO: Authenticate
                               },
                             ),
                           ),
@@ -175,9 +171,20 @@ class _LoginState extends State<Login> {
                         InkWell(
                           child: Text(
                             'Sign in',
-                            style: TextStyle(color: primaryColor),
+                            style: TextStyle(
+                              color: primaryColor,
+                              decoration: TextDecoration.underline,
+                            ),
                           ),
-                          onTap: () {},
+                          onTap: () {
+                            // TODO: navigate to registration
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => Registration(),
+                              ),
+                            );
+                          },
                         )
                       ],
                     ),

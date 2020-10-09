@@ -24,7 +24,7 @@ class _LoginState extends State<Login> {
           ),
           child: Center(
             child: FractionallySizedBox(
-              heightFactor: 0.75,
+              heightFactor: 1,
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -127,9 +127,14 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 5,
+                    ),
                     child: RaisedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // TODO: Login with google
+                      },
                       color: primaryColor,
                       child: FractionallySizedBox(
                         widthFactor: 0.8,
@@ -161,32 +166,35 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Not a user. ',
-                          style: TextStyle(color: primaryColor),
-                        ),
-                        InkWell(
-                          child: Text(
-                            'Sign in',
-                            style: TextStyle(
-                              color: primaryColor,
-                              decoration: TextDecoration.underline,
-                            ),
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 50),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Not a user. ',
+                            style: TextStyle(color: primaryColor),
                           ),
-                          onTap: () {
-                            // TODO: navigate to registration
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => Registration(),
+                          InkWell(
+                            child: Text(
+                              'Sign in',
+                              style: TextStyle(
+                                color: primaryColor,
+                                decoration: TextDecoration.underline,
                               ),
-                            );
-                          },
-                        )
-                      ],
+                            ),
+                            onTap: () {
+                              // TODO: navigate to registration
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => Registration(),
+                                ),
+                              );
+                            },
+                          )
+                        ],
+                      ),
                     ),
                   )
                 ],

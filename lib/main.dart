@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grocery_manager/app_theme.dart';
+import 'package:grocery_manager/home_screen.dart';
 import 'package:grocery_manager/login.dart';
 import 'package:grocery_manager/registration.dart';
 
@@ -14,6 +16,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -26,17 +29,20 @@ class MyApp extends StatelessWidget {
       systemNavigationBarDividerColor: Colors.grey,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        textTheme: AppTheme.textTheme,
-        platform: TargetPlatform.iOS,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return FutureBuilder(
+      future: Firebase.initializeApp(),
+      builder: (context, snapshot) => MaterialApp(
+        title: 'Grocery shop',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          textTheme: AppTheme.textTheme,
+          platform: TargetPlatform.iOS,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: MyHomePage(),
+        // home: Registration(),
       ),
-      home: Login(),
-      // home: Registration(),
     );
   }
 }

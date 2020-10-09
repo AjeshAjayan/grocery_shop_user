@@ -106,6 +106,7 @@ class Registration extends StatelessWidget {
                 child: RaisedButton(
                   color: primaryColor,
                   child: Container(
+                    height: 50,
                     color: primaryColor,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

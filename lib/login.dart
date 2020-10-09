@@ -1,7 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_manager/app/app_home_screen.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grocery_manager/app_theme.dart';
-import 'package:grocery_manager/registration.dart';
+
+class AuthSocialIcons {
+  static final google = 'google_icon_logo.jpg';
+  static final fb = 'fb_icon.png';
+  static final microsoft = 'ms_icon.png';
+}
 
 class Login extends StatefulWidget {
   @override
@@ -25,184 +32,159 @@ class _LoginState extends State<Login> {
           child: Center(
             child: FractionallySizedBox(
               heightFactor: 1,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(bottom: 30),
-                    child: FractionallySizedBox(
-                      widthFactor: 0.8,
-                      child: TextFormField(
-                        cursorColor: primaryColor,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Color(0x50FEFEFE),
-                          suffixIcon: Icon(
-                            Icons.person,
-                            color: primaryColor,
-                          ),
-                          border: const OutlineInputBorder(),
-                          labelText: "Username",
-                          labelStyle: TextStyle(color: primaryColor),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: primaryColor,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: primaryColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    child: FractionallySizedBox(
-                      widthFactor: 0.8,
-                      child: TextFormField(
-                        obscureText: true,
-                        cursorColor: primaryColor,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Color(0x50FFFFFF),
-                          suffixIcon: Icon(
-                            Icons.lock,
-                            color: primaryColor,
-                          ),
-                          border: OutlineInputBorder(),
-                          labelText: "Password",
-                          labelStyle: TextStyle(
-                            color: primaryColor,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: primaryColor,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: primaryColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(top: 30),
-                    child: FractionallySizedBox(
-                      widthFactor: 0.8,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: RaisedButton(
-                              color: primaryColor,
-                              child: Container(
-                                height: 50,
-                                child: Center(
-                                  child: Text(
-                                    "Log in",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              onPressed: () {
-                                // TODO: Authenticate
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  FractionallySizedBox(
-                    widthFactor: 0.8,
-                    child: Divider(
-                      color: primaryColor,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 5,
-                    ),
-                    child: RaisedButton(
-                      onPressed: () {
-                        // TODO: Login with google
+              child: Container(
+                padding: EdgeInsets.only(bottom: 50),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    buildButtonWithIcon(
+                      AuthSocialIcons.google,
+                      () async {
+                        try {
+                          UserCredential credential = await signInWithGoogle();
+                          print(credential);
+                        } catch (e) {
+                          showDialog(
+                            context: context,
+                            builder: (_) =>
+                                buildAlertDialog('Something went wrong'),
+                          );
+                          print(e);
+                        }
                       },
-                      color: primaryColor,
-                      child: FractionallySizedBox(
-                        widthFactor: 0.8,
-                        child: Container(
-                          height: 50,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Login with',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(
-                                  top: 10,
-                                  left: 3,
-                                  bottom: 10,
-                                ),
-                                child: Image(
-                                  image: AssetImage(
-                                    "assets/images/google_icon_logo.jpg",
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
                     ),
-                  ),
-                  Center(
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: 50),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Not a user. ',
-                            style: TextStyle(color: primaryColor),
-                          ),
-                          InkWell(
-                            child: Text(
-                              'Sign in',
-                              style: TextStyle(
-                                color: primaryColor,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                            onTap: () {
-                              // TODO: navigate to registration
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => Registration(),
-                                ),
-                              );
-                            },
-                          )
-                        ],
-                      ),
+                    buildDivider(),
+                    buildButtonWithIcon(
+                      AuthSocialIcons.fb,
+                      () async {
+                        UserCredential credential = await signInWithFacebook();
+                      },
                     ),
-                  )
-                ],
+                    buildDivider(),
+                    buildButtonWithIcon(
+                      AuthSocialIcons.microsoft,
+                      () {
+                        print('with ms');
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  Widget buildAlertDialog(String errorText) {
+    return AlertDialog(
+      backgroundColor: AppTheme.nearlyWhite,
+      title: Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Icon(
+              Icons.error,
+              color: Colors.redAccent,
+              size: 50,
+            ),
+          ],
+        ),
+      ),
+      content: FractionallySizedBox(
+        heightFactor: .1,
+        child: Center(
+          child: Text(
+            errorText,
+            style: AppTheme.body1,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildDivider() {
+    return FractionallySizedBox(
+      widthFactor: 0.8,
+      child: Divider(
+        color: primaryColor,
+      ),
+    );
+  }
+
+  Widget buildButtonWithIcon(String image, Function callback) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: 10,
+        horizontal: 5,
+      ),
+      child: RaisedButton(
+        onPressed: () {
+          // TODO: Login with google
+          callback();
+        },
+        color: primaryColor,
+        child: FractionallySizedBox(
+          widthFactor: 0.8,
+          child: Container(
+            height: 50,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Login with',
+                  style: TextStyle(color: Colors.white),
+                ),
+                Container(
+                  padding: EdgeInsets.only(
+                    top: 10,
+                    left: 3,
+                    bottom: 10,
+                  ),
+                  child: Image(
+                    image: AssetImage(
+                      "assets/images/$image",
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    // Create a new credential
+    final GoogleAuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  Future<UserCredential> signInWithFacebook() async {
+    // Trigger the sign-in flow
+    final LoginResult result = await FacebookAuth.instance.login();
+
+    // Create a credential from the access token
+    final FacebookAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.credential(result.accessToken.token);
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance
+        .signInWithCredential(facebookAuthCredential);
   }
 }

@@ -3,9 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grocery_manager/app_theme.dart';
-import 'package:grocery_manager/home_screen.dart';
 import 'package:grocery_manager/login.dart';
-import 'package:grocery_manager/registration.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +14,6 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -30,20 +27,32 @@ class MyApp extends StatelessWidget {
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
     return FutureBuilder(
-      future: Firebase.initializeApp(),
-      builder: (context, snapshot) => MaterialApp(
-        title: 'Grocery shop',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          textTheme: AppTheme.textTheme,
-          platform: TargetPlatform.iOS,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home: MyHomePage(),
-        // home: Registration(),
-      ),
-    );
+        future: Firebase.initializeApp(),
+        builder: (context, snapshot) {
+          if(snapshot.hasError) {
+            print(snapshot.error);
+            return MaterialApp(
+              title: 'Grocery shop',
+              debugShowCheckedModeBanner: false,
+              home: Container(
+                child: Center(
+                  child: Text('Error when initializing app'),
+                ),
+              ),
+            );
+          }
+          return MaterialApp(
+            title: 'Grocery shop',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+              textTheme: AppTheme.textTheme,
+              platform: TargetPlatform.iOS,
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+            ),
+            home: Login(),
+          );
+        });
   }
 }
 

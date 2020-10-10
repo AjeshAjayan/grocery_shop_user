@@ -15,4 +15,7 @@
     <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowBackground">@android:color/white</item>
     </style>
+    <string name="facebook_app_id">2926352274268952</string>
+    <string name="fb_login_protocol_scheme">fb2926352274268952</string>
+    <string name="app_name">com.grocery.grocery_app</string>
 </resources>

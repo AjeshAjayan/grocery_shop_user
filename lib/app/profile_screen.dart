@@ -4,9 +4,9 @@ import 'package:flutter/rendering.dart';
 import 'package:grocery_shop/app/models/user.dart';
 import 'package:grocery_shop/app/theme/home_theme.dart';
 import 'package:grocery_shop/app/widgets/area_list_view.dart';
+import 'package:grocery_shop/app/widgets/profile_input_flield.dart';
 import 'package:grocery_shop/app/widgets/running_view.dart';
 import 'package:grocery_shop/app/widgets/title_view.dart';
-import 'package:grocery_shop/app/widgets/workout_view.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key key, this.animationController}) : super(key: key);
@@ -74,6 +74,40 @@ class _ProfileScreenState extends State<ProfileScreen>
             curve:
             Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController,
+      ),
+    );
+
+    listViews.add(
+      ProfileInputField(
+        value: authUser.displayName,
+        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+            parent: widget.animationController,
+            curve:
+            Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
+        animationController: widget.animationController,
+        labelText: 'Shop name',
+        hintText: 'Please enter your shop name',
+        textValue: '', // TODO: get shopname
+        onSave: () {
+          // TODO: save
+        },
+      ),
+    );
+
+    listViews.add(
+      ProfileInputField(
+        value: authUser.displayName,
+        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+            parent: widget.animationController,
+            curve:
+            Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
+        animationController: widget.animationController,
+        labelText: 'Phone number',
+        hintText: 'Please enter your phone number',
+        textValue: '', // TODO: get phone number
+        onSave: () {
+          // TODO: save
+        },
       ),
     );
 

@@ -6,8 +6,12 @@ class RunningView extends StatelessWidget {
   final Animation animation;
   final username;
 
-  const RunningView({Key key, this.animationController, this.animation, this.username})
-      : super(key: key);
+  const RunningView({
+    Key key,
+    this.animationController,
+    this.animation,
+    this.username,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -74,13 +78,11 @@ class RunningView extends StatelessWidget {
                                           this.username,
                                           textAlign: TextAlign.left,
                                           style: TextStyle(
-                                            fontFamily:
-                                                AppTheme.fontName,
+                                            fontFamily: AppTheme.fontName,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 14,
                                             letterSpacing: 0.0,
-                                            color:
-                                                AppTheme.nearlyDarkBlue,
+                                            color: AppTheme.nearlyDarkBlue,
                                           ),
                                         ),
                                       ),
@@ -101,8 +103,7 @@ class RunningView extends StatelessWidget {
                                         fontWeight: FontWeight.w500,
                                         fontSize: 10,
                                         letterSpacing: 0.0,
-                                        color: AppTheme.grey
-                                            .withOpacity(0.5),
+                                        color: AppTheme.grey.withOpacity(0.5),
                                       ),
                                     ),
                                   ),

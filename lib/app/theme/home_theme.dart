@@ -6,6 +6,7 @@ class AppTheme {
   static const Color white = Color(0xFFFFFFFF);
   static const Color background = Color(0xFFF2F3F8);
   static const Color nearlyDarkBlue = Color(0xFF2633C5);
+  static const Color nearlyLiteDarkBlue = Color(0x702633C5);
 
   static const Color nearlyBlue = Color(0xFF00B6F0);
   static const Color nearlyBlack = Color(0xFF213333);
@@ -28,6 +29,15 @@ class AppTheme {
     bodyText2: body2,
     bodyText1: body1,
     caption: caption,
+  );
+
+  static const TextStyle nearlyDarkBlueTextStyle = TextStyle(
+    color: AppTheme.nearlyDarkBlue,
+    fontSize: 16,
+    fontFamily: fontName,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.4,
+    height: 0.9,
   );
 
   static const TextStyle display1 = TextStyle(
@@ -86,4 +96,56 @@ class AppTheme {
     letterSpacing: 0.2,
     color: lightText, // was lightText
   );
+
+  static List<Widget> buildBlueOutlinedInput({
+    String labelText,
+    TextEditingController controller,
+    Function onIconPress,
+    String hintText
+  }) {
+    return [
+      Expanded(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextFormField(
+            style: TextStyle(
+              color: AppTheme.nearlyDarkBlue,
+            ),
+            controller: controller,
+            cursorColor: AppTheme.nearlyDarkBlue,
+            decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle: TextStyle(color: AppTheme.nearlyLiteDarkBlue),
+              border: OutlineInputBorder(),
+              labelText: labelText,
+              labelStyle: TextStyle(
+                color: AppTheme.nearlyDarkBlue,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: AppTheme.nearlyDarkBlue,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: AppTheme.nearlyDarkBlue,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: IconButton(
+          icon: Icon(
+            Icons.save_alt,
+            size: 30,
+            color: AppTheme.nearlyDarkBlue,
+          ),
+          onPressed: onIconPress,
+        ),
+      )
+    ];
+  }
 }

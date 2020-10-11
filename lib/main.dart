@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:grocery_manager/app_theme.dart';
-import 'package:grocery_manager/login.dart';
+import 'package:grocery_shop/app/app_home_screen.dart';
+import 'package:grocery_shop/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,7 +50,8 @@ class MyApp extends StatelessWidget {
               platform: TargetPlatform.iOS,
               visualDensity: VisualDensity.adaptivePlatformDensity,
             ),
-            home: Login(),
+            // home: Login(),
+            home: AppHomeScreen(),
           );
         });
   }

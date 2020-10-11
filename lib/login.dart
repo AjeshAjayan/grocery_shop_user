@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:grocery_manager/app_theme.dart';
+import 'package:grocery_shop/app_theme.dart';
 
 class AuthSocialIcons {
   static final google = 'google_icon_logo.jpg';
@@ -42,15 +42,14 @@ class _LoginState extends State<Login> {
                       AuthSocialIcons.google,
                       () async {
                         try {
-                          UserCredential credential = await signInWithGoogle();
+                          UserCredential credential = await _signInWithGoogle();
                           print(credential);
                         } catch (e) {
                           showDialog(
                             context: context,
                             builder: (_) =>
-                                buildAlertDialog('Something went wrong'),
+                                _buildAlertDialog('Something went wrong'),
                           );
-                          print(e);
                         }
                       },
                     ),
@@ -58,14 +57,18 @@ class _LoginState extends State<Login> {
                     buildButtonWithIcon(
                       AuthSocialIcons.fb,
                       () async {
-                        UserCredential credential = await signInWithFacebook();
+                        UserCredential credential = await _signInWithFacebook();
                       },
                     ),
                     buildDivider(),
                     buildButtonWithIcon(
                       AuthSocialIcons.microsoft,
                       () {
-                        print('with ms');
+                        showDialog(
+                          context: context,
+                          builder: (_) =>
+                              _buildAlertDialog('In progress'),
+                        );
                       },
                     ),
                   ],
@@ -78,7 +81,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget buildAlertDialog(String errorText) {
+  Widget _buildAlertDialog(String errorText) {
     return AlertDialog(
       backgroundColor: AppTheme.nearlyWhite,
       title: Container(
@@ -122,7 +125,6 @@ class _LoginState extends State<Login> {
       ),
       child: RaisedButton(
         onPressed: () {
-          // TODO: Login with google
           callback();
         },
         color: primaryColor,
@@ -157,7 +159,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Future<UserCredential> signInWithGoogle() async {
+  Future<UserCredential> _signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
 
@@ -175,7 +177,7 @@ class _LoginState extends State<Login> {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  Future<UserCredential> signInWithFacebook() async {
+  Future<UserCredential> _signInWithFacebook() async {
     // Trigger the sign-in flow
     final LoginResult result = await FacebookAuth.instance.login();
 
@@ -186,5 +188,9 @@ class _LoginState extends State<Login> {
     // Once signed in, return the UserCredential
     return await FirebaseAuth.instance
         .signInWithCredential(facebookAuthCredential);
+  }
+
+  void redirectToHomeScreen(context) {
+    Navigator.push(context, MaterialPageRoute(),);
   }
 }

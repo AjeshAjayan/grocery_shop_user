@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:grocery_shop/app/app_home_screen.dart';
 import 'package:grocery_shop/app_theme.dart';
 
 class AuthSocialIcons {
@@ -43,7 +44,7 @@ class _LoginState extends State<Login> {
                       () async {
                         try {
                           UserCredential credential = await _signInWithGoogle();
-                          print(credential);
+                          redirectToHomeScreen(context);
                         } catch (e) {
                           showDialog(
                             context: context,
@@ -58,6 +59,7 @@ class _LoginState extends State<Login> {
                       AuthSocialIcons.fb,
                       () async {
                         UserCredential credential = await _signInWithFacebook();
+                        redirectToHomeScreen(context);
                       },
                     ),
                     buildDivider(),
@@ -66,8 +68,7 @@ class _LoginState extends State<Login> {
                       () {
                         showDialog(
                           context: context,
-                          builder: (_) =>
-                              _buildAlertDialog('In progress'),
+                          builder: (_) => _buildAlertDialog('In progress'),
                         );
                       },
                     ),
@@ -191,6 +192,9 @@ class _LoginState extends State<Login> {
   }
 
   void redirectToHomeScreen(context) {
-    Navigator.push(context, MaterialPageRoute(),);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => AppHomeScreen()),
+    );
   }
 }

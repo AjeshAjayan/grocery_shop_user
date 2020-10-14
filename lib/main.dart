@@ -30,7 +30,6 @@ class MyApp extends StatelessWidget {
         future: Firebase.initializeApp(),
         builder: (context, snapshot) {
           if(snapshot.hasError) {
-            print(snapshot.error);
             return MaterialApp(
               title: 'Grocery shop',
               debugShowCheckedModeBanner: false,

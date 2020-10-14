@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -18,6 +19,17 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen>
     with TickerProviderStateMixin {
+  final TextEditingController shopNameController = new TextEditingController();
+  final TextEditingController phoneNumberController =
+      new TextEditingController();
+  bool shopNameIsEditPressed = false;
+  bool phNoIsEditPressed = false;
+
+  CollectionReference shopUsers =
+      FirebaseFirestore.instance.collection('shop_users');
+  DocumentReference userDoc =
+      FirebaseFirestore.instance.collection('shop_users').doc(authUser.uid);
+
   Animation<double> topBarAnimation;
   double topBarOpacity = 0.0;
   final ScrollController scrollController = ScrollController();
@@ -62,7 +74,8 @@ class _ProfileScreenState extends State<ProfileScreen>
       child: Center(
         child: CircleAvatar(
           radius: 50,
-          backgroundImage: NetworkImage(authUser.photoURL)
+          backgroundImage: NetworkImage(authUser.photoURL),
+          backgroundColor: AppTheme.nearlyWhite,
         ),
       ),
     ));
@@ -72,41 +85,97 @@ class _ProfileScreenState extends State<ProfileScreen>
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController,
             curve:
-            Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
+                Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController,
       ),
     );
 
     listViews.add(
-      ProfileInputField(
-        value: authUser.displayName,
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-            Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-        labelText: 'Shop name',
-        hintText: 'Please enter your shop name',
-        textValue: '', // TODO: get shopname
-        onSave: () {
-          // TODO: save
+      StreamBuilder<DocumentSnapshot>(
+        stream: this.userDoc.snapshots(),
+        builder: (
+          BuildContext context,
+          AsyncSnapshot<DocumentSnapshot> snapshot,
+        ) {
+          if (snapshot.hasError) {
+            buildError();
+          }
+          if (snapshot.connectionState == ConnectionState.none) {
+            buildError();
+          }
+          if (snapshot.connectionState == ConnectionState.done ||
+              snapshot.connectionState == ConnectionState.active) {
+            return ProfileInputField(
+              isEditPressed: this.shopNameIsEditPressed,
+              value: authUser.displayName,
+              animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController,
+                      curve: Interval((1 / count) * 3, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              animationController: widget.animationController,
+              labelText: 'Shop name',
+              hintText: 'Please enter your shop name',
+              textValue: snapshot.data.data() == null ||
+                      snapshot.data.data()['shop_name'] == ''
+                  ? ''
+                  : snapshot.data.data()['shop_name'],
+              controller: shopNameController,
+              textInputType: TextInputType.name,
+              onSave: () {
+                saveOrUpdateShopUserDetails(
+                  snapshot,
+                  'shop_name',
+                  this.shopNameController,
+                );
+              },
+            );
+          }
+
+          return Container();
         },
       ),
     );
 
     listViews.add(
-      ProfileInputField(
-        value: authUser.displayName,
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-            Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-        labelText: 'Phone number',
-        hintText: 'Please enter your phone number',
-        textValue: '', // TODO: get phone number
-        onSave: () {
-          // TODO: save
+      StreamBuilder<DocumentSnapshot>(
+        stream: this.userDoc.snapshots(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasError) {
+            buildError();
+          }
+          if (snapshot.connectionState == ConnectionState.none) {
+            buildError();
+          }
+          if (snapshot.connectionState == ConnectionState.done ||
+              snapshot.connectionState == ConnectionState.active) {
+            return ProfileInputField(
+              value: authUser.displayName,
+              animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController,
+                      curve: Interval((1 / count) * 3, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              animationController: widget.animationController,
+              labelText: 'Phone number',
+              hintText: 'Please enter your phone number',
+              textValue: snapshot.data.data() == null ||
+                      snapshot.data.data()['phone_number'] == null
+                  ? ''
+                  : snapshot.data.data()['phone_number'],
+              controller: phoneNumberController,
+              textInputType: TextInputType.phone,
+              onSave: () {
+                saveOrUpdateShopUserDetails(
+                  snapshot,
+                  'phone_number',
+                  this.phoneNumberController,
+                );
+              },
+            );
+          }
+          return Container();
         },
       ),
     );
@@ -118,7 +187,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController,
             curve:
-            Interval((1 / count) * 4, 1.0, curve: Curves.fastOutSlowIn))),
+                Interval((1 / count) * 4, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController,
       ),
     );
@@ -133,6 +202,30 @@ class _ProfileScreenState extends State<ProfileScreen>
         mainScreenAnimationController: widget.animationController,
       ),
     );
+  }
+
+  saveOrUpdateShopUserDetails(
+    AsyncSnapshot<DocumentSnapshot> snapshot,
+    String keyValue,
+    TextEditingController controller,
+  ) {
+    if (snapshot.data.data() == null) {
+      this.shopUsers.doc(authUser.uid.toString()).set({
+        keyValue: controller.text,
+      });
+    } else {
+      this.shopUsers.doc(authUser.uid).update({
+        keyValue: controller.text,
+      }).then((value) {
+        updateIsEditPressed(false);
+      });
+    }
+  }
+
+  void updateIsEditPressed(bool value) {
+    setState(() {
+      this.shopNameIsEditPressed = value;
+    });
   }
 
   @override
@@ -257,6 +350,24 @@ class _ProfileScreenState extends State<ProfileScreen>
           },
         )
       ],
+    );
+  }
+
+  Widget buildError() {
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Icon(
+            Icons.error,
+            color: AppTheme.errorText,
+          ),
+          Text(
+            'Failed to load shop name',
+            style: AppTheme.nearlyDarkBlueTextStyle,
+          ),
+        ],
+      ),
     );
   }
 }

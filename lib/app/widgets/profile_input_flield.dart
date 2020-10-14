@@ -11,6 +11,9 @@ class ProfileInputField extends StatefulWidget {
   final String hintText;
   final String labelText;
   final String textValue;
+  final TextEditingController controller;
+  final TextInputType textInputType;
+  bool isEditPressed;
   ProfileInputField({
     Key key,
     this.value,
@@ -20,6 +23,9 @@ class ProfileInputField extends StatefulWidget {
     this.hintText,
     this.labelText,
     this.textValue,
+    this.controller,
+    this.textInputType,
+    this.isEditPressed = false,
   }) : super(key: key);
 
   @override
@@ -27,7 +33,14 @@ class ProfileInputField extends StatefulWidget {
 }
 
 class _ProfileInputFieldState extends State<ProfileInputField> {
-  bool isEditPressed = false;
+
+  @override
+  void initState() {
+    if(widget.value != '') {
+      widget.controller.text = widget.textValue;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,19 +83,20 @@ class _ProfileInputFieldState extends State<ProfileInputField> {
                             width: double.infinity,
                             height: 70,
                             child: Row(
-                              children:
-                                  widget.textValue == '' || isEditPressed
-                                      ? AppTheme.buildBlueOutlinedInput(
-                                          labelText: widget.labelText,
-                                          hintText: widget.hintText,
-                                          onIconPress: widget.onSave,
-                                        )
-                                      : buildText(
-                                          text: widget.textValue,
-                                          onIconPress: () {
-                                            updateIsEditPressed(true);
-                                          },
-                                        ),
+                              children: widget.textValue == '' || widget.isEditPressed
+                                  ? AppTheme.buildBlueOutlinedInput(
+                                      labelText: widget.labelText,
+                                      hintText: widget.hintText,
+                                      onIconPress: widget.onSave,
+                                      controller: widget.controller,
+                                      textInputType: widget.textInputType,
+                                    )
+                                  : buildText(
+                                      text: widget.textValue,
+                                      onIconPress: () {
+                                        updateIsEditPressed(true);
+                                      },
+                                    ),
                             ),
                           ),
                         ),
@@ -100,7 +114,7 @@ class _ProfileInputFieldState extends State<ProfileInputField> {
 
   void updateIsEditPressed(bool value) {
     setState(() {
-      isEditPressed = value;
+      widget.isEditPressed = value;
     });
   }
 

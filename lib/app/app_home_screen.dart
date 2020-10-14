@@ -39,7 +39,7 @@ class _AppHomeScreenState extends State<AppHomeScreen>
         setState(() {
           authUser = user;
         });
-        print('User is signed in! $user');
+        print('User is signed in!');
       }
     });
   }

@@ -21,6 +21,8 @@ class AppTheme {
   static const Color spacer = Color(0xFFF2F2F2);
   static const String fontName = 'Roboto';
 
+  static const Color errorText = Colors.redAccent;
+
   static const TextTheme textTheme = TextTheme(
     headline4: display1,
     headline5: headline,
@@ -101,7 +103,8 @@ class AppTheme {
     String labelText,
     TextEditingController controller,
     Function onIconPress,
-    String hintText
+    String hintText,
+    TextInputType textInputType
   }) {
     return [
       Expanded(
@@ -111,6 +114,7 @@ class AppTheme {
             style: TextStyle(
               color: AppTheme.nearlyDarkBlue,
             ),
+            keyboardType: textInputType,
             controller: controller,
             cursorColor: AppTheme.nearlyDarkBlue,
             decoration: InputDecoration(

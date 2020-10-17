@@ -7,6 +7,7 @@ import 'package:grocery_shop/app/dashboard.dart';
 import 'package:grocery_shop/app/models/tabIcon_data.dart';
 import 'package:grocery_shop/app/theme/home_theme.dart';
 import 'package:grocery_shop/app/training_screen.dart';
+import 'package:grocery_shop/app/widgets/pre_loader.dart';
 import 'package:grocery_shop/login.dart';
 
 class AppHomeScreen extends StatefulWidget {
@@ -80,6 +81,7 @@ class _AppHomeScreenState extends State<AppHomeScreen>
                 children: <Widget>[
                   tabBody,
                   bottomBar(),
+                  PreLoader(),
                 ],
               );
             }
@@ -140,4 +142,5 @@ class _AppHomeScreenState extends State<AppHomeScreen>
       ],
     );
   }
+
 }

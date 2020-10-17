@@ -33,10 +33,9 @@ class ProfileInputField extends StatefulWidget {
 }
 
 class _ProfileInputFieldState extends State<ProfileInputField> {
-
   @override
   void initState() {
-    if(widget.value != '') {
+    if (widget.value != '') {
       widget.controller.text = widget.textValue;
     }
     super.initState();
@@ -56,7 +55,11 @@ class _ProfileInputFieldState extends State<ProfileInputField> {
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.only(
-                      left: 24, right: 24, top: 0, bottom: 0),
+                    left: 24,
+                    right: 24,
+                    top: 0,
+                    bottom: 0,
+                  ),
                   child: Stack(
                     overflow: Overflow.visible,
                     children: <Widget>[
@@ -83,20 +86,21 @@ class _ProfileInputFieldState extends State<ProfileInputField> {
                             width: double.infinity,
                             height: 70,
                             child: Row(
-                              children: widget.textValue == '' || widget.isEditPressed
-                                  ? AppTheme.buildBlueOutlinedInput(
-                                      labelText: widget.labelText,
-                                      hintText: widget.hintText,
-                                      onIconPress: widget.onSave,
-                                      controller: widget.controller,
-                                      textInputType: widget.textInputType,
-                                    )
-                                  : buildText(
-                                      text: widget.textValue,
-                                      onIconPress: () {
-                                        updateIsEditPressed(true);
-                                      },
-                                    ),
+                              children:
+                                  widget.textValue == '' || widget.isEditPressed
+                                      ? AppTheme.buildBlueOutlinedInput(
+                                          labelText: widget.labelText,
+                                          hintText: widget.hintText,
+                                          onIconPress: widget.onSave,
+                                          controller: widget.controller,
+                                          textInputType: widget.textInputType,
+                                        )
+                                      : buildText(
+                                          text: widget.textValue,
+                                          onIconPress: () {
+                                            updateIsEditPressed(true);
+                                          },
+                                        ),
                             ),
                           ),
                         ),

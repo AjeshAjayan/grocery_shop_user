@@ -1,4 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:grocery_shop/app/app_config.dart';
+import 'package:grocery_shop/app/widgets/otp_dailog.dart';
+import 'package:grocery_shop/app/widgets/pre_loader.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -24,6 +31,9 @@ class _ProfileScreenState extends State<ProfileScreen>
       new TextEditingController();
   bool shopNameIsEditPressed = false;
   bool phNoIsEditPressed = false;
+  String verificationId;
+  int resendToken;
+  int otpTimeOut = 2;
 
   CollectionReference shopUsers =
       FirebaseFirestore.instance.collection('shop_users');
@@ -38,6 +48,40 @@ class _ProfileScreenState extends State<ProfileScreen>
   Future<bool> getData() async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 50));
     return true;
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  void manualyVerifyOtp(String otp) async {
+    PreLoader.load.value = true;
+    // Create a PhoneAuthCredential with the code
+    PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: otp);
+    DocumentSnapshot user = await this.userDoc.get();
+    if (user.data == null) {
+      this.shopUsers.doc(authUser.uid.toString()).set({
+        'phone_number': this.phoneNumberController.text,
+      });
+    } else {
+      this.shopUsers.doc(authUser.uid).update({
+        'phone_number': this.phoneNumberController.text,
+      }).then((value) {
+        updateIsEditPressed(false);
+      });
+    }
+    PreLoader.load.value = false;
+  }
+
+  void buildOptInputUi() {
+    showDialog(
+      context: context,
+      builder: (con) {
+        return OtpDialog(otpTimeOut, manualyVerifyOtp);
+      },
+    );
   }
 
   Widget getMainListViewUI() {
@@ -63,6 +107,49 @@ class _ProfileScreenState extends State<ProfileScreen>
             },
           );
         }
+      },
+    );
+  }
+
+  Future<void> handleVerification(snapshot) async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: '+91' + this.phoneNumberController.text,
+      timeout: Duration(minutes: otpTimeOut),
+      verificationCompleted: (PhoneAuthCredential credential) {
+        // if verified save phone number
+        saveOrUpdateShopUserDetails(
+          snapshot,
+          'phone_number',
+          this.phoneNumberController,
+        );
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        if (e.code == 'invalid-phone-number') {
+          AppTheme.buildSnackBarError(
+            context,
+            'The provided phone number is not valid.',
+          );
+        } else {
+          AppTheme.buildSnackBarError(
+            context,
+            'Something went wrong.',
+          );
+        }
+      },
+      codeSent: (String verificationId, int resendToken) {
+        // stop pre-loader
+        PreLoader.load.value = false;
+
+        this.verificationId = verificationId;
+        this.resendToken = resendToken;
+
+        buildOptInputUi();
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        AppTheme.buildSnackBarError(
+          context,
+          'Timeout..!',
+        );
       },
     );
   }
@@ -123,11 +210,13 @@ class _ProfileScreenState extends State<ProfileScreen>
               controller: shopNameController,
               textInputType: TextInputType.name,
               onSave: () {
+                PreLoader.load.value = true;
                 saveOrUpdateShopUserDetails(
                   snapshot,
                   'shop_name',
                   this.shopNameController,
                 );
+                PreLoader.load.value = false;
               },
             );
           }
@@ -166,12 +255,20 @@ class _ProfileScreenState extends State<ProfileScreen>
                   : snapshot.data.data()['phone_number'],
               controller: phoneNumberController,
               textInputType: TextInputType.phone,
-              onSave: () {
-                saveOrUpdateShopUserDetails(
-                  snapshot,
-                  'phone_number',
-                  this.phoneNumberController,
-                );
+              onSave: () async {
+                PreLoader.load.value = true;
+                final phNoDuplicationRes = await http.post(AppConfig.apiBaseUrl,
+                    body: {'phoneNumber': this.phoneNumberController.text});
+                dynamic res = json.decode(phNoDuplicationRes.body);
+                if (!res["isExist"]) {
+                  await handleVerification(snapshot);
+                } else {
+                  AppTheme.buildSnackBar(
+                    context,
+                    'This phone number already associated with an account',
+                  );
+                }
+                PreLoader.load.value = false;
               },
             );
           }

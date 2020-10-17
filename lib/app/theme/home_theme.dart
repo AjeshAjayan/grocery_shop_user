@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flushbar/flushbar.dart';
 
 class AppTheme {
   AppTheme._();
@@ -99,13 +100,12 @@ class AppTheme {
     color: lightText, // was lightText
   );
 
-  static List<Widget> buildBlueOutlinedInput({
-    String labelText,
-    TextEditingController controller,
-    Function onIconPress,
-    String hintText,
-    TextInputType textInputType
-  }) {
+  static List<Widget> buildBlueOutlinedInput(
+      {String labelText,
+      TextEditingController controller,
+      Function onIconPress,
+      String hintText,
+      TextInputType textInputType}) {
     return [
       Expanded(
         child: Padding(
@@ -151,5 +151,55 @@ class AppTheme {
         ),
       )
     ];
+  }
+
+  static void buildSnackBar(BuildContext context, String msg) {
+    Flushbar(
+      maxWidth: MediaQuery.of(context).size.width - 30,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: Duration(seconds: 5),
+      borderColor: AppTheme.nearlyDarkBlue,
+      backgroundColor: AppTheme.white,
+      messageText: Text(
+        msg,
+        style: TextStyle(
+          color: AppTheme.nearlyDarkBlue,
+          fontSize: 17,
+        ),
+      ),
+      borderRadius: 50,
+      boxShadows: [
+        BoxShadow(
+          color: AppTheme.nearlyDarkBlue,
+          blurRadius: 2,
+          spreadRadius: 4
+        )
+      ],
+    )..show(context);
+  }
+
+  static void buildSnackBarError(BuildContext context, String msg) {
+    Flushbar(
+      maxWidth: MediaQuery.of(context).size.width - 30,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: Duration(seconds: 5),
+      borderColor: AppTheme.errorText,
+      backgroundColor: AppTheme.white,
+      messageText: Text(
+        msg,
+        style: TextStyle(
+          color: AppTheme.errorText,
+          fontSize: 17,
+        ),
+      ),
+      borderRadius: 50,
+      boxShadows: [
+        BoxShadow(
+            color: AppTheme.errorText,
+            blurRadius: 2,
+            spreadRadius: 4
+        )
+      ],
+    )..show(context);
   }
 }

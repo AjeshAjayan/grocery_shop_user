@@ -41,8 +41,6 @@ class _AppHomeScreenState extends State<AppHomeScreen>
         setState(() {
           authUser = user;
         });
-        final test = user.uid;
-        print('user id : $test');
         DocumentReference userDocRef =
             FirebaseFirestore.instance.collection('shop_users').doc(user.uid);
         userDocRef.get().then((value) {

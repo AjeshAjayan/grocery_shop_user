@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_shop/app/models/user.dart';
@@ -39,6 +40,50 @@ class _AppHomeScreenState extends State<AppHomeScreen>
       } else {
         setState(() {
           authUser = user;
+        });
+        final test = user.uid;
+        print('user id : $test');
+        DocumentReference userDocRef =
+            FirebaseFirestore.instance.collection('shop_users').doc(user.uid);
+        userDocRef.get().then((value) {
+          if (value.exists) {
+            if (value.data()['shop_name'] == null ||
+                value.data()['phone_number'] == null ||
+                value.data()['addressLineOne'] == null ||
+                value.data()['addressLineTwo'] == null ||
+                value.data()['landmark'] == null) {
+              AppTheme.buildSnackBar(context, 'Please complete your profile');
+              setState(() {
+                tabBody = ProfileScreen(
+                  animationController: animationController,
+                );
+              });
+            } else if (value.data()['latitude'] == null ||
+                value.data()['longitude'] == null) {
+              setState(() {
+                tabBody = ProfileScreen(
+                  animationController: animationController,
+                );
+              });
+              AppTheme.buildSnackBar(
+                  context, 'Please calibrate your shop\'s location');
+            }
+          } else {
+            AppTheme.buildSnackBar(context, 'Please complete your profile');
+            setState(() {
+              tabBody = ProfileScreen(
+                animationController: animationController,
+              );
+            });
+          }
+        }).catchError((e) {
+          print(e);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => Login(),
+            ),
+          );
         });
         print('User is signed in!');
       }
@@ -142,5 +187,4 @@ class _AppHomeScreenState extends State<AppHomeScreen>
       ],
     );
   }
-
 }

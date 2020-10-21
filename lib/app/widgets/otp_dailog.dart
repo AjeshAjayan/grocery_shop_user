@@ -94,7 +94,7 @@ class _OtpDialogState extends State<OtpDialog> {
                   ),
                 ),
                 onChanged: (value) {
-                  if(value.length == 5) {
+                  if(value.length == 6) {
                     widget.callback(value);
                     Timer(Duration(milliseconds: 300), () {
                       Navigator.of(context).pop();

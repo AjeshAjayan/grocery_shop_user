@@ -96,7 +96,7 @@ class _ProfileInputFieldState extends State<ProfileInputField> {
                                           textInputType: widget.textInputType,
                                         )
                                       : buildText(
-                                          text: widget.textValue,
+                                          text: widget.textValue != null ? widget.textValue : '' ,
                                           onIconPress: () {
                                             updateIsEditPressed(true);
                                           },

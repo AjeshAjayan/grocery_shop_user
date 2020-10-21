@@ -11,10 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:grocery_shop/app/models/user.dart';
 import 'package:grocery_shop/app/theme/home_theme.dart';
-import 'package:grocery_shop/app/widgets/area_list_view.dart';
+import 'package:grocery_shop/app/widgets/location_view.dart';
 import 'package:grocery_shop/app/widgets/profile_input_flield.dart';
 import 'package:grocery_shop/app/widgets/running_view.dart';
 import 'package:grocery_shop/app/widgets/title_view.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key key, this.animationController}) : super(key: key);
@@ -29,6 +30,11 @@ class _ProfileScreenState extends State<ProfileScreen>
   final TextEditingController shopNameController = new TextEditingController();
   final TextEditingController phoneNumberController =
       new TextEditingController();
+  final TextEditingController addressOneController =
+      new TextEditingController();
+  final TextEditingController addressTwoController =
+      new TextEditingController();
+  final TextEditingController landmarkController = new TextEditingController();
   bool shopNameIsEditPressed = false;
   bool phNoIsEditPressed = false;
   String verificationId;
@@ -59,20 +65,45 @@ class _ProfileScreenState extends State<ProfileScreen>
   void manualyVerifyOtp(String otp) async {
     PreLoader.load.value = true;
     // Create a PhoneAuthCredential with the code
-    PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: otp);
-    DocumentSnapshot user = await this.userDoc.get();
-    if (user.data == null) {
-      this.shopUsers.doc(authUser.uid.toString()).set({
-        'phone_number': this.phoneNumberController.text,
-      });
-    } else {
-      this.shopUsers.doc(authUser.uid).update({
-        'phone_number': this.phoneNumberController.text,
-      }).then((value) {
-        updateIsEditPressed(false);
-      });
-    }
-    PreLoader.load.value = false;
+    PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
+      verificationId: verificationId,
+      smsCode: otp,
+    );
+    FirebaseAuth.instance.currentUser
+        .linkWithCredential(phoneAuthCredential)
+        .then((value) async {
+      DocumentSnapshot user = await this.userDoc.get();
+      if (user.data()['phone_number'] == null) {
+        this
+            .shopUsers
+            .doc(authUser.uid.toString())
+            .set({
+              'phone_number': this.phoneNumberController.text,
+            })
+            .then((value) => updateIsEditPressed(false))
+            .catchError((e) {
+              AppTheme.buildSnackBarError(context, 'Something went wrong');
+              updateIsEditPressed(false);
+            });
+      } else {
+        this.shopUsers.doc(authUser.uid).update({
+          'phone_number': this.phoneNumberController.text,
+        }).then((value) {
+          updateIsEditPressed(false);
+        }).catchError((e) {
+          AppTheme.buildSnackBarError(context, 'Something went wrong');
+        });
+      }
+      PreLoader.load.value = false;
+    }).catchError((e) {
+      if (e.code == 'invalid-verification-code') {
+        PreLoader.load.value = false;
+        AppTheme.buildSnackBarError(context, 'OTP mismatch');
+      } else {
+        PreLoader.load.value = false;
+        AppTheme.buildSnackBarError(context, 'Something went wrong');
+      }
+    });
   }
 
   void buildOptInputUi() {
@@ -116,12 +147,31 @@ class _ProfileScreenState extends State<ProfileScreen>
       phoneNumber: '+91' + this.phoneNumberController.text,
       timeout: Duration(minutes: otpTimeOut),
       verificationCompleted: (PhoneAuthCredential credential) {
-        // if verified save phone number
-        saveOrUpdateShopUserDetails(
-          snapshot,
-          'phone_number',
-          this.phoneNumberController,
-        );
+        // close otp dialog
+        Navigator.of(context).pop();
+
+        FirebaseAuth.instance
+            .currentUser
+            .linkWithCredential(credential)
+            .then((value) async {
+          // if verified save phone number
+          saveOrUpdateShopUserDetails(
+            snapshot,
+            'phone_number',
+            this.phoneNumberController,
+          );
+          updateIsEditPressed(false);
+          PreLoader.load.value = false;
+          AppTheme.buildSnackBarError(context, 'Phone number verification successful');
+        }).catchError((e) {
+          if (e.code == 'invalid-verification-code') {
+            PreLoader.load.value = false;
+            AppTheme.buildSnackBarError(context, 'OTP mismatch');
+          } else {
+            PreLoader.load.value = false;
+            AppTheme.buildSnackBarError(context, 'Something went wrong');
+          }
+        });
       },
       verificationFailed: (FirebaseAuthException e) {
         if (e.code == 'invalid-phone-number') {
@@ -278,9 +328,145 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
 
     listViews.add(
+      StreamBuilder<DocumentSnapshot>(
+        stream: this.userDoc.snapshots(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasError) {
+            buildError();
+          }
+          if (snapshot.connectionState == ConnectionState.none) {
+            buildError();
+          }
+          if (snapshot.connectionState == ConnectionState.done ||
+              snapshot.connectionState == ConnectionState.active) {
+            return ProfileInputField(
+              value: authUser.displayName,
+              animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController,
+                      curve: Interval((1 / count) * 3, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              animationController: widget.animationController,
+              labelText: 'Building name / number',
+              hintText: 'Building name / number',
+              textValue: snapshot.data.data() == null ||
+                      snapshot.data.data()['addressLineOne'] == null
+                  ? ''
+                  : snapshot.data.data()['addressLineOne'],
+              controller: addressOneController,
+              textInputType: TextInputType.text,
+              onSave: () async {
+                PreLoader.load.value = true;
+                saveOrUpdateShopUserDetails(
+                  snapshot,
+                  'addressLineOne',
+                  this.addressOneController,
+                );
+                PreLoader.load.value = false;
+              },
+            );
+          }
+          return Container();
+        },
+      ),
+    );
+
+    listViews.add(
+      StreamBuilder<DocumentSnapshot>(
+        stream: this.userDoc.snapshots(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasError) {
+            buildError();
+          }
+          if (snapshot.connectionState == ConnectionState.none) {
+            buildError();
+          }
+          if (snapshot.connectionState == ConnectionState.done ||
+              snapshot.connectionState == ConnectionState.active) {
+            return ProfileInputField(
+              value: authUser.displayName,
+              animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController,
+                      curve: Interval((1 / count) * 3, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              animationController: widget.animationController,
+              labelText: 'Street name',
+              hintText: 'Street name',
+              textValue: snapshot.data.data() == null ||
+                      snapshot.data.data()['addressLineTwo'] == null
+                  ? ''
+                  : snapshot.data.data()['addressLineTwo'],
+              controller: addressTwoController,
+              textInputType: TextInputType.text,
+              onSave: () async {
+                PreLoader.load.value = true;
+                saveOrUpdateShopUserDetails(
+                  snapshot,
+                  'addressLineTwo',
+                  this.addressTwoController,
+                );
+                PreLoader.load.value = false;
+              },
+            );
+          }
+          return Container();
+        },
+      ),
+    );
+
+    listViews.add(
+      StreamBuilder<DocumentSnapshot>(
+        stream: this.userDoc.snapshots(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasError) {
+            buildError();
+          }
+          if (snapshot.connectionState == ConnectionState.none) {
+            buildError();
+          }
+          if (snapshot.connectionState == ConnectionState.done ||
+              snapshot.connectionState == ConnectionState.active) {
+            return ProfileInputField(
+              value: authUser.displayName,
+              animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController,
+                      curve: Interval((1 / count) * 3, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              animationController: widget.animationController,
+              labelText: 'Landmark',
+              hintText: 'Example: near KIMS Hospital',
+              textValue: snapshot.data.data() == null ||
+                      snapshot.data.data()['landmark'] == null
+                  ? ''
+                  : snapshot.data.data()['landmark'],
+              controller: landmarkController,
+              textInputType: TextInputType.text,
+              onSave: () async {
+                PreLoader.load.value = true;
+                saveOrUpdateShopUserDetails(
+                  snapshot,
+                  'landmark',
+                  this.landmarkController,
+                );
+                PreLoader.load.value = false;
+              },
+            );
+          }
+          return Container();
+        },
+      ),
+    );
+
+    listViews.add(
       TitleView(
-        titleTxt: 'Area of focus',
-        subTxt: 'more',
+        titleTxt: 'Location',
+        subTxt: '',
+        showForwardArrow: false,
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController,
             curve:
@@ -290,7 +476,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
 
     listViews.add(
-      AreaListView(
+      LocationView(
         mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
             CurvedAnimation(
                 parent: widget.animationController,

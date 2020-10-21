@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_shop/app/theme/home_theme.dart';
-import 'package:grocery_shop/app/widgets/area_list_view.dart';
+import 'package:grocery_shop/app/widgets/location_view.dart';
 import 'package:grocery_shop/app/widgets/running_view.dart';
 import 'package:grocery_shop/app/widgets/title_view.dart';
 import 'package:grocery_shop/app/widgets/workout_view.dart';
@@ -101,7 +101,7 @@ class _TrainingScreenState extends State<TrainingScreen>
     );
 
     listViews.add(
-      AreaListView(
+      LocationView(
         mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
             CurvedAnimation(
                 parent: widget.animationController,

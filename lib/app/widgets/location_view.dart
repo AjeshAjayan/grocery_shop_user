@@ -11,10 +11,14 @@ import 'package:geocoding/geocoding.dart';
 import 'package:grocery_shop/app/widgets/pre_loader.dart';
 
 class LocationView extends StatefulWidget {
-  const LocationView(
-      {Key key, this.mainScreenAnimationController, this.mainScreenAnimation})
-      : super(key: key);
+  const LocationView({
+    Key key,
+    this.mainScreenAnimationController,
+    this.mainScreenAnimation,
+    this.isVerified = true,
+  }) : super(key: key);
 
+  final bool isVerified;
   final AnimationController mainScreenAnimationController;
   final Animation<dynamic> mainScreenAnimation;
   @override
@@ -60,6 +64,7 @@ class _LocationViewState extends State<LocationView>
                   child: MapView(
                     animation: animation,
                     animationController: animationController,
+                    isVerified: widget.isVerified,
                   ),
                 ),
               )),
@@ -74,7 +79,10 @@ class MapView extends StatefulWidget {
     Key key,
     this.animationController,
     this.animation,
+    this.isVerified,
   }) : super(key: key);
+
+  final bool isVerified;
   final AnimationController animationController;
   final Animation<dynamic> animation;
   final Completer<GoogleMapController> _controller = Completer();
@@ -168,53 +176,56 @@ class _MapViewState extends State<MapView> {
                                   widget._controller.complete(controller);
                                 },
                               ),
-                              InkWell(
-                                focusColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
-                                hoverColor: Colors.transparent,
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(8.0)),
-                                splashColor:
-                                    AppTheme.nearlyDarkBlue.withOpacity(0.2),
-                                onTap: () async {
-                                  PreLoader.load.value = true;
+                              !widget.isVerified
+                                  ? InkWell(
+                                      focusColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      hoverColor: Colors.transparent,
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(8.0)),
+                                      splashColor: AppTheme.nearlyDarkBlue
+                                          .withOpacity(0.2),
+                                      onTap: () async {
+                                        PreLoader.load.value = true;
 
-                                  final position = await getAndSaveLocation();
-                                  print(position.longitude);
-                                  List<Placemark> placeMarks =
-                                      await getAndSaveAddress(position);
+                                        final position =
+                                            await getAndSaveLocation();
+                                        print(position.longitude);
+                                        List<Placemark> placeMarks =
+                                            await getAndSaveAddress(position);
 
-                                  PreLoader.load.value = false;
-                                },
-                                child: Container(
-                                  height: 70,
-                                  width: double.infinity,
-                                  color: Color(0xB9544f4e),
-                                  child: Center(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.my_location,
-                                          color: AppTheme.nearlyDarkBlue,
-                                          size: 30,
+                                        PreLoader.load.value = false;
+                                      },
+                                      child: Container(
+                                        height: 70,
+                                        width: double.infinity,
+                                        color: Color(0xB9544f4e),
+                                        child: Center(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.my_location,
+                                                color: AppTheme.nearlyDarkBlue,
+                                                size: 30,
+                                              ),
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Text(
+                                                streamData['latitude'] != null
+                                                    ? 'Re-calibrate Location'
+                                                    : 'Calibrate Location',
+                                                style: AppTheme
+                                                    .nearlyDarkBlueTextStyle,
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        Text(
-                                          streamData['latitude'] != null
-                                              ? 'Re-calibrate Location'
-                                              : 'Calibrate Location',
-                                          style:
-                                              AppTheme.nearlyDarkBlueTextStyle,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              )
+                                      ),
+                                    )
+                                  : Container()
                             ],
                           ),
                         );

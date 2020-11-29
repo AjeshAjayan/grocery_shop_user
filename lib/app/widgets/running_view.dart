@@ -51,18 +51,6 @@ class RunningView extends StatelessWidget {
                           child: Stack(
                             alignment: Alignment.topLeft,
                             children: <Widget>[
-                              ClipRRect(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.0)),
-                                child: SizedBox(
-                                  height: 74,
-                                  child: AspectRatio(
-                                    aspectRatio: 1.714,
-                                    child: Image.asset(
-                                        "assets/app_images/back.png"),
-                                  ),
-                                ),
-                              ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[

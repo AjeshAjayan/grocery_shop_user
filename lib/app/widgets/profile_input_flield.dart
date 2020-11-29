@@ -14,6 +14,7 @@ class ProfileInputField extends StatefulWidget {
   final TextEditingController controller;
   final TextInputType textInputType;
   bool isEditPressed;
+  final bool isVerified;
   ProfileInputField({
     Key key,
     this.value,
@@ -26,6 +27,7 @@ class ProfileInputField extends StatefulWidget {
     this.controller,
     this.textInputType,
     this.isEditPressed = false,
+    this.isVerified = true,
   }) : super(key: key);
 
   @override
@@ -96,7 +98,9 @@ class _ProfileInputFieldState extends State<ProfileInputField> {
                                           textInputType: widget.textInputType,
                                         )
                                       : buildText(
-                                          text: widget.textValue != null ? widget.textValue : '' ,
+                                          text: widget.textValue != null
+                                              ? widget.textValue
+                                              : '',
                                           onIconPress: () {
                                             updateIsEditPressed(true);
                                           },
@@ -132,17 +136,19 @@ class _ProfileInputFieldState extends State<ProfileInputField> {
           ),
         ),
       ),
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: IconButton(
-          icon: Icon(
-            Icons.edit,
-            size: 30,
-            color: AppTheme.nearlyDarkBlue,
-          ),
-          onPressed: onIconPress,
-        ),
-      )
+      !widget.isVerified
+          ? Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: IconButton(
+                icon: Icon(
+                  Icons.edit,
+                  size: 30,
+                  color: AppTheme.nearlyDarkBlue,
+                ),
+                onPressed: onIconPress,
+              ),
+            )
+          : Container()
     ];
   }
 }

@@ -15,7 +15,6 @@ import 'package:grocery_shop/app/widgets/location_view.dart';
 import 'package:grocery_shop/app/widgets/profile_input_flield.dart';
 import 'package:grocery_shop/app/widgets/running_view.dart';
 import 'package:grocery_shop/app/widgets/title_view.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key key, this.animationController}) : super(key: key);
@@ -218,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     ));
     listViews.add(
       RunningView(
-        username: authUser.displayName,
+        username: authUser.displayName ?? '',
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController,
             curve:
@@ -243,8 +242,9 @@ class _ProfileScreenState extends State<ProfileScreen>
           if (snapshot.connectionState == ConnectionState.done ||
               snapshot.connectionState == ConnectionState.active) {
             return ProfileInputField(
+              isVerified: snapshot.data.data()['is_verified'] ?? false,
               isEditPressed: this.shopNameIsEditPressed,
-              value: authUser.displayName,
+              value: authUser.displayName ?? '',
               animation: Tween<double>(begin: 0.0, end: 1.0).animate(
                   CurvedAnimation(
                       parent: widget.animationController,
@@ -290,7 +290,8 @@ class _ProfileScreenState extends State<ProfileScreen>
           if (snapshot.connectionState == ConnectionState.done ||
               snapshot.connectionState == ConnectionState.active) {
             return ProfileInputField(
-              value: authUser.displayName,
+              isVerified: snapshot.data.data()['is_verified'] ?? false,
+              value: authUser.displayName ?? '',
               animation: Tween<double>(begin: 0.0, end: 1.0).animate(
                   CurvedAnimation(
                       parent: widget.animationController,
@@ -341,7 +342,8 @@ class _ProfileScreenState extends State<ProfileScreen>
           if (snapshot.connectionState == ConnectionState.done ||
               snapshot.connectionState == ConnectionState.active) {
             return ProfileInputField(
-              value: authUser.displayName,
+              isVerified: snapshot.data.data()['is_verified'] ?? false,
+              value: authUser.displayName ?? '',
               animation: Tween<double>(begin: 0.0, end: 1.0).animate(
                   CurvedAnimation(
                       parent: widget.animationController,
@@ -386,7 +388,8 @@ class _ProfileScreenState extends State<ProfileScreen>
           if (snapshot.connectionState == ConnectionState.done ||
               snapshot.connectionState == ConnectionState.active) {
             return ProfileInputField(
-              value: authUser.displayName,
+              isVerified: snapshot.data.data()['is_verified'] ?? false,
+              value: authUser.displayName ?? '',
               animation: Tween<double>(begin: 0.0, end: 1.0).animate(
                   CurvedAnimation(
                       parent: widget.animationController,
@@ -431,7 +434,8 @@ class _ProfileScreenState extends State<ProfileScreen>
           if (snapshot.connectionState == ConnectionState.done ||
               snapshot.connectionState == ConnectionState.active) {
             return ProfileInputField(
-              value: authUser.displayName,
+              isVerified: snapshot.data.data()['is_verified'] ?? false,
+              value: authUser.displayName ?? '',
               animation: Tween<double>(begin: 0.0, end: 1.0).animate(
                   CurvedAnimation(
                       parent: widget.animationController,
@@ -476,13 +480,29 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
 
     listViews.add(
-      LocationView(
-        mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: widget.animationController,
-                curve: Interval((1 / count) * 5, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: widget.animationController,
+      StreamBuilder<DocumentSnapshot>(
+          stream: this.userDoc.snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            buildError();
+          }
+          if (snapshot.connectionState == ConnectionState.none) {
+            buildError();
+          }
+          if (snapshot.connectionState == ConnectionState.done ||
+              snapshot.connectionState == ConnectionState.active) {
+            return LocationView(
+              isVerified: snapshot.data.data()['is_verified'] ?? false,
+              mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController,
+                      curve: Interval((1 / count) * 5, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              mainScreenAnimationController: widget.animationController,
+            );
+          }
+          return Container();
+        }
       ),
     );
   }
